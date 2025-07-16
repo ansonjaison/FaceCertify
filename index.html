@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceCertify - Real-Time Exam Verification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- START OF CSS --- */
+        :root {
+            --bg-dark: #020412;
+            --primary-accent: #00BFFF; /* DeepSkyBlue */
+            --text-light: #e4e4e4;
+            --card-bg: rgba(20, 20, 40, 0.7);
+            --border-color: rgba(0, 191, 255, 0.2);
+            --glow-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+            --danger-color: #ff5c5c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        #plexus-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .main-header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(2, 4, 18, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            text-decoration: none;
+            text-shadow: var(--glow-shadow);
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .main-nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .main-nav a:hover {
+            color: var(--primary-accent);
+        }
+
+        .cta-nav-button {
+            border: 1px solid var(--primary-accent);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-nav-button:hover {
+            background-color: var(--primary-accent);
+            color: var(--bg-dark);
+            box-shadow: var(--glow-shadow);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #fff, var(--primary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            animation: fadeIn 2s ease-out 0.5s;
+            animation-fill-mode: backwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--primary-accent);
+            color: var(--bg-dark);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-shadow);
+            animation: fadeIn 2s ease-out 1s;
+            animation-fill-mode: backwards;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 191, 255, 0.8);
+        }
+
+        /* General Section Styling */
+        section {
+            padding: 6rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem auto;
+            color: #aaa;
+        }
+        
+        /* The Challenge & Solution Section */
+        .challenge-solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        .challenge-column h3, .solution-column h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .challenge-column h3 { color: var(--danger-color); border-bottom: 2px solid var(--danger-color); }
+        .solution-column h3 { color: var(--primary-accent); border-bottom: 2px solid var(--primary-accent); }
+        
+        .info-card {
+            background: var(--card-bg);
+            border-left: 4px solid var(--danger-color);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .solution-column .info-card {
+            border-left-color: var(--primary-accent);
+        }
+        .info-card strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--glow-shadow);
+            border-color: var(--primary-accent);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* How It Works Section */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .step-card {
+            background-color: transparent;
+            padding: 2rem;
+            border: 1px dashed var(--border-color);
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .step-card span {
+            position: absolute;
+            top: -1.5rem;
+            left: 2rem;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(0, 191, 255, 0.2);
+        }
+
+        .step-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tech Stack Section */
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .tech-item {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .tech-item:hover {
+            color: var(--primary-accent);
+            transform: scale(1.1);
+            box-shadow: var(--glow-shadow);
+        }
+
+        /* Team Section */
+        .team-container {
+            text-align: center;
+        }
+        .team-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .team-member {
+            background: var(--card-bg);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+        }
+        .guide-mention {
+            margin-top: 2rem;
+        }
+        .guide-mention h4 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #aaa;
+            margin-bottom: 0.5rem;
+        }
+        .guide-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-accent);
+        }
+        
+        /* Future Scope Section */
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        .future-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .future-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-accent);
+        }
+
+        /* Contact Section */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .contact-form input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+
+        .contact-form input:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: var(--glow-shadow);
+        }
+
+        /* Footer */
+        .main-footer {
+            padding: 2rem;
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            background: #01020c;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            .main-nav ul {
+                display: none;
+            }
+            .challenge-solution-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* --- END OF CSS --- */
+    </style>
+</head>
+<body>
+    <canvas id="plexus-bg"></canvas>
+
+    <header class="main-header">
+        <div class="container">
+            <nav class="main-nav">
+                <a href="#" class="logo">FaceCertify</a>
+                <ul>
+                    <li><a href="#challenge">The Challenge</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#tech">Technology</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#contact" class="cta-nav-button">Request Demo</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Secure the Future of Examinations</h1>
+                    <p class="hero-subtitle">FaceCertify delivers real-time facial recognition to ensure academic integrity, automate attendance, and streamline exam verification.</p>
+                    <a href="#contact" class="cta-button">Get a Demo</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenge" class="challenge-section">
+            <div class="container">
+                <div class="challenge-solution-grid">
+                    <div class="challenge-column">
+                        <h3><span class="icon">⚠️</span> The Old Way</h3>
+                        <div class="info-card">
+                            <strong>Slow Manual Verification:</strong> Traditional ID checks are time-consuming and prone to human error, causing delays.
+                        </div>
+                        <div class="info-card">
+                            <strong>High Impersonation Risk:</strong> Fake IDs and collusion make it difficult to prevent fraudulent exam-takers.
+                        </div>
+                         <div class="info-card">
+                            <strong>Inefficient Paperwork:</strong> Manual attendance tracking is cumbersome and leads to administrative burdens and errors.
+                        </div>
+                    </div>
+                    <div class="solution-column">
+                        <h3><span class="icon">✨</span> The FaceCertify Way</h3>
+                         <div class="info-card">
+                            <strong>Real-Time Biometric ID:</strong> Verifies a student's identity in seconds using their unique facial features.
+                        </div>
+                        <div class="info-card">
+                            <strong>Automated & Secure:</strong> By automating the process, we eliminate human error and secure the exam environment.
+                        </div>
+                         <div class="info-card">
+                            <strong>Dynamic Seating:</strong> Once verified, students are instantly shown their classroom and seat number on a visual map.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <div class="container">
+                <h2 class="section-title">Core System Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Ironclad Security</h3>
+                        <p>Leverages a powerful SVM model to prevent impersonation and ensure only authorized students enter the exam hall.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Automated & Instant</h3>
+                        <p>Eliminates manual paperwork by automatically logging attendance and displaying seat allocations in real-time.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚙️</div>
+                        <h3>Effortless Administration</h3>
+                        <p>A centralized dashboard gives administrators complete control to manage students, models, and monitor live activity.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works-section">
+            <div class="container">
+                <h2 class="section-title">A Simple 3-Step Process</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <span>01</span>
+                        <h3>Capture</h3>
+                        <p>Student approaches the portal and their image is captured via a standard webcam.</p>
+                    </div>
+                    <div class="step-card">
+                        <span>02</span>
+                        <h3>Verify</h3>
+                        <p>Our AI model instantly matches the face against the secure student database with a 70% confidence threshold.</p>
+                    </div>
+                    <div class="step-card">
+                        <span>03</span>
+                        <h3>Access</h3>
+                        <p>Verified students see their seat number, and their attendance is logged automatically in a CSV file.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="tech" class="tech-stack-section">
+            <div class="container">
+                <h2 class="section-title">Built with Modern Technology</h2>
+                <p class="section-subtitle">FaceCertify is built on a robust and scalable technology stack to ensure reliability and performance.</p>
+                <div class="tech-grid">
+                    <div class="tech-item">Python</div>
+                    <div class="tech-item">Flask</div>
+                    <div class="tech-item">SVM Model</div>
+                    <div class="tech-item">Face-Recognition Lib</div>
+                    <div class="tech-item">Tailwind CSS</div>
+                    <div class="tech-item">CSV Storage</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="team-section">
+            <div class="container team-container">
+                <h2 class="section-title">Our Team</h2>
+                <p class="section-subtitle">A project by the talented students of Viswajyothi College of Engineering and Technology.</p>
+                <div class="team-grid">
+                    <div class="team-member">Anson Mathew Jaison</div>
+                    <div class="team-member">Arjun Gireesh</div>
+                    <div class="team-member">Ebin Manoj</div>
+                    <div class="team-member">Elwin Vincent</div>
+                </div>
+                <div class="guide-mention">
+                    <h4>Under the guidance of</h4>
+                    <p class="guide-name">Ms. Neha Beegam PE, Asst. Professor, CSE Dept.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="future" class="future-scope-section">
+            <div class="container">
+                <h2 class="section-title">The Road Ahead</h2>
+                <p class="section-subtitle">FaceCertify is a strong foundation with exciting potential for future enhancements to further revolutionize academic integrity.</p>
+                <div class="future-grid">
+                    <div class="future-card">
+                        <h3>☁️ Cloud & Database Integration</h3>
+                        <p>Upgrading to cloud servers and a robust database like MySQL will enhance scalability for larger institutions.</p>
+                    </div>
+                    <div class="future-card">
+                        <h3>📱 Mobile Accessibility</h3>
+                        <p>Developing a dedicated mobile application would provide greater flexibility and ease of access for both students and administrators.</p>
+                    </div>
+                    <div class="future-card">
+                        <h3>🤖 Advanced AI Proctoring</h3>
+                        <p>Integrating real-time AI proctoring to monitor student behavior during exams can further enhance security and prevent misconduct.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Upgrade Your Institution's Security</h2>
+                <p class="section-subtitle">Contact us for a personalized demo and see how FaceCertify can work for you.</p>
+                <form class="contact-form">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Institution's Email" required>
+                    <button type="submit" class="cta-button">Request a Demo</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 FaceCertify. All Rights Reserved. A student project from the Department of Computer Science & Engineering, VJCET.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- START OF JAVASCRIPT ---
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Plexus Background Animation ---
+            const canvas = document.getElementById('plexus-bg');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            const setupCanvas = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = Math.random() * 0.4 - 0.2;
+                    this.vy = Math.random() * 0.4 - 0.2;
+                    this.radius = 1.5;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 191, 255, 0.8)';
+                    ctx.fill();
+                }
+            }
+
+            const createParticles = () => {
+                const particleCount = Math.floor(canvas.width * canvas.height / 15000);
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            };
+
+            const connectParticles = () => {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(0, 191, 255, ${1 - distance / 120})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            };
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                connectParticles();
+                requestAnimationFrame(animate);
+            };
+
+            // Initialize
+            setupCanvas();
+            createParticles();
+            animate();
+
+            window.addEventListener('resize', () => {
+                setupCanvas();
+                createParticles();
+            });
+        });
+        // --- END OF JAVASCRIPT ---
+    </script>
+</body>
+</html>
