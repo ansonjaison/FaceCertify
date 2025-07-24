@@ -1,0 +1,27 @@
+# Virtual environments
+venv/
+.env
+
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# FaceCertify app-specific
+uploads/                 # Temporary uploaded images
+models/*.h5              # Trained model file
+models/*.pkl             # Alternative model format
+models/*.joblib          # Optional if you ever use this
+models/*.csv             # Student/attendance data (optional: remove if you want to track sample data)
+models/*.txt             # Label files (e.g. face_labels.txt)
+
+# Training data
+images/                  # Training dataset (student image folders)
+
+# macOS system junk
+.DS_Store
+
+# IDE/editor settings (optional but safe to ignore)
+.vscode/
+.idea/
