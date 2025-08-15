@@ -8,10 +8,10 @@ import face_recognition
 import joblib
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.environ.get('SECRET_KEY', 'your_secret_key')  # Use env variable for production
 
-# Paths
-BASE_DIR = r"D:/FaceCertify/Project Final"
+# Paths (relative to app.py)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "face_recognition_model.h5")
 LABELS_PATH = os.path.join(BASE_DIR, "models", "face_labels.txt")
 STUDENTS_CSV = os.path.join(BASE_DIR, "models", "students.csv")
@@ -56,7 +56,7 @@ def manage_recognition_attempts(ip_address):
     """
     current_date = datetime.now().strftime("%Y-%m-%d")
     
-    #  Reset attempts if it's a new day
+    # Reset attempts if it's a new day
     if ip_address in recognition_attempts:
         if recognition_attempts[ip_address].get('date') != current_date:
             recognition_attempts[ip_address] = {'count': 0, 'date': current_date}
@@ -112,17 +112,6 @@ def add_student():
     seat_no = request.form['seat_no']
     write_csv(STUDENTS_CSV, [name, subject, classroom, seat_no])
     return redirect(url_for('admin_dashboard'))
-
-""""
-# Edit Student
-@app.route('/edit_student', methods=['POST'])
-def edit_student():
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('admin_login'))
-    data = request.form.to_dict()
-    update_csv(STUDENTS_CSV, data['old_name'], data)
-    return redirect(url_for('admin_dashboard'))
-""" 
 
 # Delete Student
 @app.route('/delete_student', methods=['POST'])
@@ -300,7 +289,6 @@ def recognize():
                 "exam": student_info["subject"],
                 "classroom": student_info["classroom"],
                 "seat_no": student_info["seat_no"],
-                #"confidence": f"{confidence_score:.2f}%",
                 "attendance": "Already Marked ✅" if not attendance_marked else "Marked ✅"
             }
         else:
@@ -328,4 +316,5 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 10000))  # Use Render's PORT or fallback
+    app.run(host='0.0.0.0', port=port, debug=False)  # Production settings
